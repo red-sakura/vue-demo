@@ -7,14 +7,20 @@
         <a-card style="width: 400px">
           <h1>TO DO</h1>
           <div>
-            <a-input placeholder="想要干什么?" style="width: 200px"/>
-            <a-button type="primary">
-              添加
-            </a-button>
+            <a-row>
+              <a-col :span="16">
+                <a-input placeholder="想要干什么?" style="width: 220px" v-model="data"/>              </a-col>
+              <a-col :span="8">
+                <a-button type="primary" @click="add">
+                  添加
+                </a-button>
+             </a-col>
+            </a-row>
           </div>
           <div>
-            <List></List>
+            <List v-bind:title="input"></List>
           </div>
+          <Button v-bind:title="input"></Button>
         </a-card>
       </a-col>
       <a-col :span="8">
@@ -25,9 +31,26 @@
 
 <script>
 import List from '../../../components/list'
+import Button from '../../../components/button'
+
 export default {
   name: 'todo',
-  components: {List}
+  components: {List,Button},
+  data () {
+    return {
+      input: [],
+      data: ''
+    }
+  },
+  methods: {
+    add: function () {
+      if (this.data === ''){
+        return
+      }
+      this.input.push(this.data)
+      this.data = ''
+    }
+  }
 }
 </script>
 
