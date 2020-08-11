@@ -1,54 +1,71 @@
 <template>
   <div>
-    <a-row>
-      <a-col :span="8">
-      </a-col>
-      <a-col :span="8">
-        <a-card style="width: 400px">
-          <h1>TO DO</h1>
-          <div>
-            <a-row>
-              <a-col :span="16">
-                <a-input placeholder="想要干什么?" style="width: 220px" v-model="data"/>              </a-col>
-              <a-col :span="8">
-                <a-button type="primary" @click="add">
-                  添加
-                </a-button>
-             </a-col>
-            </a-row>
-          </div>
-          <div>
-            <List v-bind:title="input"></List>
-          </div>
-          <Button v-bind:title="input"></Button>
-        </a-card>
-      </a-col>
-      <a-col :span="8">
-      </a-col>
-    </a-row>
+    <h1>TO DO</h1>
+    <input
+      type="text"
+      class="add-input"
+      autofocus="autofocus"
+      placeholder="todo what?"
+      @keydown.enter="addTodo"
+    >
+    <!--  v-bind:todo="todo" 父组件todo给子组件item传过去一个todo数据  -->
+    <Item
+      :todo="todo"
+      v-for="todo in filteredTodos"
+      :key="todo.id"
+      @del="deleteTodo"
+    ></Item>
+    <Tabs
+      :filter="filter"
+      :todos="todos"
+      @toggle="toggleFilter"
+      @clearAll="clearAll"
+    ></Tabs>
   </div>
 </template>
 
 <script>
-import List from '../../../components/list'
-import Button from '../../../components/button'
-
+import Item from '../../../components/item'
+import Tabs from '../../../components/tabs'
+let id = 0
 export default {
   name: 'todo',
-  components: {List,Button},
+  components : {
+    Item,
+    Tabs
+  },
   data () {
     return {
-      input: [],
-      data: ''
+      todos: [],
+      filter: 'all'
+    }
+  },
+  computed: {
+    filteredTodos() {
+      if(this.filter === 'all') {
+        return this.todos
+      }
+      const completed = this.filter === 'completed'
+      return this.todos.filter(todo => completed === todo.completed)
     }
   },
   methods: {
-    add: function () {
-      if (this.data === ''){
-        return
-      }
-      this.input.push(this.data)
-      this.data = ''
+    addTodo (e) {
+      this.todos.unshift({
+        id : id++,
+        content: e.target.value.trim(),
+        completed: false
+      })
+      e.target.value = ''
+    },
+    deleteTodo (id) {
+      this.todos.splice(this.todos.findIndex(todo => todo.id === id), 1)
+    },
+    toggleFilter(state) {
+      this.filter = state
+    },
+    clearAll() {
+      this.todos = []
     }
   }
 }
