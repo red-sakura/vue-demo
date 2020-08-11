@@ -13,7 +13,7 @@ export default new Router({
     {
       path: '/',
       name: 'demo',
-      component: () => import('@/views/modules/demo/demo')
+      component: () => import('@/views/modules/todo/todo')
     }
   ]
 })
